@@ -1,0 +1,29 @@
+SUMMARY
+Total Datasets,3
+Total Sources,5
+Sources Completed,0
+Sources Failed,0
+Total Issues,4
+Open Issues,3
+Critical Issues,0
+
+DATASETS
+Name,Description,Source Type,Refresh Frequency,Status
+"CRM Contacts","Raw contact data from Salesforce","","daily","undefined"
+"Web Events","Clickstream data from website","","real-time","undefined"
+"Product Catalog","Master product information from ERP system","","daily","undefined"
+
+DATA SOURCES
+Name,Type,Phase,Status,Quality Score,Records Processed,Records Failed,Total Processing Minutes
+"SFDC Contacts API","api","ingestion","completed","98","15420","0","16380000"
+"Event Stream Topic","stream","processing","in_progress","95","2500000","150","40500000"
+"Customer Survey Data","api","processing","paused","92","1200","5","2700000"
+"SAP Product API","api","processed","completed","99","85000","5","6660000"
+"User Analytics Table","database","processed","completed","97","50000","2","167"
+
+ISSUES
+Title,Type,Severity,Status,Assigned To,Due Date
+"Null values in Email field","completeness","high","open","Mike Ross",""
+"Duplicate Event IDs","uniqueness","medium","in_progress","Sarah Chen",""
+"Product Name Encoding Issue","encoding","medium","open","Mike Ross",""
+"Email Format Validation Required","validity","high","open","Sarah Chen",""

@@ -1,0 +1,10 @@
+tracertrail/node_modules
+tracertrail/dist
+tracertrail/.git
+tracertrail/.env
+tracertrail/.DS_Store
+tracertrail/coverage
+node_modules
+.git
+.env
+.DS_Store

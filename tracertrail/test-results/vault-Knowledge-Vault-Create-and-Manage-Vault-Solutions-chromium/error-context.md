@@ -1,0 +1,244 @@
+# Page snapshot
+
+```yaml
+- generic [ref=e3]:
+  - navigation [ref=e4]:
+    - generic [ref=e6]:
+      - link "DataAgent v1.0.0" [ref=e7] [cursor=pointer]:
+        - /url: /dashboard
+        - img "DataAgent" [ref=e8]
+        - generic [ref=e9]: v1.0.0
+      - link "Dashboard" [ref=e10] [cursor=pointer]:
+        - /url: /dashboard
+        - button "Dashboard" [ref=e11]:
+          - img
+          - text: Dashboard
+      - button "Analytics" [ref=e12] [cursor=pointer]:
+        - img
+        - text: Analytics
+        - img
+      - link "Lineage" [ref=e13] [cursor=pointer]:
+        - /url: /datalineage
+        - button "Lineage" [ref=e14]:
+          - img
+          - text: Lineage
+      - link "Projects" [ref=e15] [cursor=pointer]:
+        - /url: /projects
+        - button "Projects" [ref=e16]:
+          - img
+          - text: Projects
+      - link "Datasets" [ref=e17] [cursor=pointer]:
+        - /url: /datasets
+        - button "Datasets" [ref=e18]:
+          - img
+          - text: Datasets
+      - link "Data Sources" [ref=e19] [cursor=pointer]:
+        - /url: /datasources
+        - button "Data Sources" [ref=e20]:
+          - img
+          - text: Data Sources
+      - link "Vault" [ref=e21] [cursor=pointer]:
+        - /url: /vault
+        - button "Vault" [ref=e22]:
+          - img
+          - text: Vault
+      - link "Export" [ref=e23] [cursor=pointer]:
+        - /url: /export
+        - button "Export" [ref=e24]:
+          - img
+          - text: Export
+      - link "Settings" [ref=e25] [cursor=pointer]:
+        - /url: /settings
+        - button "Settings" [ref=e26]:
+          - img
+          - text: Settings
+  - generic [ref=e28]:
+    - generic [ref=e29]:
+      - generic [ref=e30]:
+        - heading "Solution Vault" [level=1] [ref=e31]:
+          - img [ref=e32]
+          - text: Solution Vault
+        - paragraph [ref=e35]: Reusable solutions for common data issues
+      - button "Add Solution" [ref=e36] [cursor=pointer]:
+        - img
+        - text: Add Solution
+    - generic [ref=e38]:
+      - img [ref=e39]
+      - textbox "Search solutions by title, description, or tags..." [ref=e42]
+    - generic [ref=e43]:
+      - generic [ref=e44]:
+        - generic [ref=e46]:
+          - generic [ref=e47]:
+            - generic [ref=e48]: Safe Numeric Conversion & Cleanup
+            - paragraph [ref=e49]: SQL pattern to safely convert dirty currency strings to decimal values.
+            - generic [ref=e50]:
+              - generic [ref=e51]: sql
+              - generic [ref=e52]: sql
+              - generic [ref=e53]: cleaning
+              - generic [ref=e54]: conversion
+              - generic [ref=e55]: finance
+          - generic [ref=e56]:
+            - button [ref=e57] [cursor=pointer]:
+              - img
+            - button [ref=e58] [cursor=pointer]:
+              - img
+        - generic [ref=e60]:
+          - generic [ref=e61]:
+            - generic [ref=e62]:
+              - img [ref=e63]
+              - generic [ref=e67]: sql
+            - button [ref=e70] [cursor=pointer]:
+              - img
+          - generic [ref=e71]:
+            - code
+      - generic [ref=e72]:
+        - generic [ref=e74]:
+          - generic [ref=e75]:
+            - generic [ref=e76]: Dynamic Schema Validator
+            - paragraph [ref=e77]: Python utility to validate DataFrame schema against a dictionary of expected types.
+            - generic [ref=e78]:
+              - generic [ref=e79]: python
+              - generic [ref=e80]: python
+              - generic [ref=e81]: validation
+              - generic [ref=e82]: schema
+              - generic [ref=e83]: quality-control
+          - generic [ref=e84]:
+            - button [ref=e85] [cursor=pointer]:
+              - img
+            - button [ref=e86] [cursor=pointer]:
+              - img
+        - generic [ref=e88]:
+          - generic [ref=e89]:
+            - generic [ref=e90]:
+              - img [ref=e91]
+              - generic [ref=e95]: python
+            - button [ref=e98] [cursor=pointer]:
+              - img
+          - generic [ref=e99]:
+            - code
+      - generic [ref=e100]:
+        - generic [ref=e102]:
+          - generic [ref=e103]:
+            - generic [ref=e104]: Statistical Outlier Detection (IQR)
+            - paragraph [ref=e105]: Pandas-based function to detect and filter statistical outliers using the Interquartile Range.
+            - generic [ref=e106]:
+              - generic [ref=e107]: python
+              - generic [ref=e108]: python
+              - generic [ref=e109]: pandas
+              - generic [ref=e110]: statistics
+              - generic [ref=e111]: outliers
+          - generic [ref=e112]:
+            - button [ref=e113] [cursor=pointer]:
+              - img
+            - button [ref=e114] [cursor=pointer]:
+              - img
+        - generic [ref=e116]:
+          - generic [ref=e117]:
+            - generic [ref=e118]:
+              - img [ref=e119]
+              - generic [ref=e123]: python
+            - button [ref=e126] [cursor=pointer]:
+              - img
+          - generic [ref=e127]:
+            - code
+      - generic [ref=e128]:
+        - generic [ref=e130]:
+          - generic [ref=e131]:
+            - generic [ref=e132]: Universal Date Normalization (SQL)
+            - paragraph [ref=e133]: Safely casts various string date formats to a standard DATE type, handling errors gracefully.
+            - generic [ref=e134]:
+              - generic [ref=e135]: sql
+              - generic [ref=e136]: sql
+              - generic [ref=e137]: dates
+              - generic [ref=e138]: casting
+              - generic [ref=e139]: snowflake
+          - generic [ref=e140]:
+            - button [ref=e141] [cursor=pointer]:
+              - img
+            - button [ref=e142] [cursor=pointer]:
+              - img
+        - generic [ref=e144]:
+          - generic [ref=e145]:
+            - generic [ref=e146]:
+              - img [ref=e147]
+              - generic [ref=e151]: sql
+            - button [ref=e154] [cursor=pointer]:
+              - img
+          - generic [ref=e155]:
+            - code
+      - generic [ref=e156]:
+        - generic [ref=e158]:
+          - generic [ref=e159]:
+            - generic [ref=e160]: Smart PII Masking Utility
+            - paragraph [ref=e161]: Configurable Python function to mask sensitive PII data while preserving some context.
+            - generic [ref=e162]:
+              - generic [ref=e163]: python
+              - generic [ref=e164]: python
+              - generic [ref=e165]: gdpr
+              - generic [ref=e166]: privacy
+              - generic [ref=e167]: security
+          - generic [ref=e168]:
+            - button [ref=e169] [cursor=pointer]:
+              - img
+            - button [ref=e170] [cursor=pointer]:
+              - img
+        - generic [ref=e172]:
+          - generic [ref=e173]:
+            - generic [ref=e174]:
+              - img [ref=e175]
+              - generic [ref=e179]: python
+            - button [ref=e182] [cursor=pointer]:
+              - img
+          - generic [ref=e183]:
+            - code
+      - generic [ref=e184]:
+        - generic [ref=e186]:
+          - generic [ref=e187]:
+            - generic [ref=e188]: PySpark Deduplication with Window Functions
+            - paragraph [ref=e189]: Remove duplicate records while keeping the most recent entry based on timestamp.
+            - generic [ref=e190]:
+              - generic [ref=e191]: python
+              - generic [ref=e192]: python
+              - generic [ref=e193]: pyspark
+              - generic [ref=e194]: dedup
+              - generic [ref=e195]: window-functions
+          - generic [ref=e196]:
+            - button [ref=e197] [cursor=pointer]:
+              - img
+            - button [ref=e198] [cursor=pointer]:
+              - img
+        - generic [ref=e200]:
+          - generic [ref=e201]:
+            - generic [ref=e202]:
+              - img [ref=e203]
+              - generic [ref=e207]: python
+            - button [ref=e210] [cursor=pointer]:
+              - img
+          - generic [ref=e211]:
+            - code
+      - generic [ref=e212]:
+        - generic [ref=e214]:
+          - generic [ref=e215]:
+            - generic [ref=e216]: Standard Email Validation & Normalization
+            - paragraph [ref=e217]: Robust SQL pattern to validate email format, handle nulls, and normalize to lowercase.
+            - generic [ref=e218]:
+              - generic [ref=e219]: sql
+              - generic [ref=e220]: sql
+              - generic [ref=e221]: email
+              - generic [ref=e222]: validation
+              - generic [ref=e223]: normalization
+          - generic [ref=e224]:
+            - button [ref=e225] [cursor=pointer]:
+              - img
+            - button [ref=e226] [cursor=pointer]:
+              - img
+        - generic [ref=e228]:
+          - generic [ref=e229]:
+            - generic [ref=e230]:
+              - img [ref=e231]
+              - generic [ref=e235]: sql
+            - button [ref=e238] [cursor=pointer]:
+              - img
+          - generic [ref=e239]:
+            - code
+```
