@@ -32,3 +32,4 @@ tracertrail/test-results
 tracertrail/test-results/.last-run.json
 test-results
 test-results/*
+tracertrail/server/storage/tracertrail.db

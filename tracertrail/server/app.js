@@ -98,7 +98,7 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ['./server/routes/*.js'],
+  apis: [path.join(__dirname, 'routes/*.js')],
 };
 
 const swaggerDocs = swaggerJsDoc(swaggerOptions);

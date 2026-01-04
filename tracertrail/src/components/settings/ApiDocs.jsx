@@ -6,16 +6,23 @@ import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Loader2, Server } from "lucide-react";
 import CodeBlock from "@/components/issues/CodeBlock";
-
+import localSpec from "@/assets/openapi.local.json";
 
 export default function ApiDocs() {
   const { data: spec, isLoading, error } = useQuery({
     queryKey: ["openapi-spec"],
-    queryFn: async () => {
-      const res = await fetch("/api/openapi.json");
-      if (!res.ok) throw new Error("Failed to fetch API spec");
-      return res.json();
-    }
+    queryFn: async ({ signal }) => {
+      try {
+        const res = await fetch("/api/openapi.json", { signal });
+        if (!res.ok) throw new Error(`Failed to load OpenAPI: ${res.status}`);
+        return await res.json();
+      } catch (e) {
+        return localSpec;
+      }
+    },
+    refetchOnWindowFocus: false,
+    retry: 1,
+    staleTime: 5 * 60 * 1000
   });
 
   if (isLoading) {
