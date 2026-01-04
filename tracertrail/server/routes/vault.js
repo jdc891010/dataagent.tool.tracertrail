@@ -48,7 +48,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /vault:
+ * /api/vault:
  *   get:
  *     summary: Returns the list of vault solutions
  *     tags: [Vault]
@@ -72,6 +72,27 @@ const router = express.Router();
  *               type: array
  *               items:
  *                 $ref: '#/components/schemas/VaultSolution'
+ *             example:
+ *               - id: "sol_123"
+ *                 title: "Standard Email Validation & Normalization"
+ *                 description: "Robust SQL pattern to validate email format, handle nulls, and normalize to lowercase."
+ *                 category: "Data Quality"
+ *                 tags: ["sql", "email", "validation", "normalization"]
+ *                 code_snippet: "SELECT id, CASE WHEN email IS NULL THEN 'unknown' ELSE LOWER(email) END as email FROM users"
+ *                 language: "sql"
+ *                 usage_count: 15
+ *                 author: "System"
+ *                 created_date: "2024-03-01T10:00:00Z"
+ *               - id: "sol_456"
+ *                 title: "PySpark Deduplication with Window Functions"
+ *                 description: "Remove duplicate records while keeping the most recent entry based on timestamp."
+ *                 category: "Transformation"
+ *                 tags: ["python", "pyspark", "dedup", "window-functions"]
+ *                 code_snippet: "window = Window.partitionBy('id').orderBy(col('ts').desc())\ndf.withColumn('rn', row_number().over(window)).filter('rn = 1').drop('rn')"
+ *                 language: "python"
+ *                 usage_count: 8
+ *                 author: "System"
+ *                 created_date: "2024-03-05T14:30:00Z"
  */
 router.get('/', (req, res) => {
   const { sort, limit, ...filters } = req.query;
@@ -109,9 +130,10 @@ router.get('/', (req, res) => {
       res.status(500).json({ error: err.message });
       return;
     }
-    // Parse JSON fields
+    // Parse JSON fields and map code_snippet to code for frontend compatibility
     const solutions = rows.map(row => ({
       ...row,
+      code: row.code_snippet, // Map database field to frontend field name
       tags: row.tags ? JSON.parse(row.tags) : [],
       metadata: row.metadata ? JSON.parse(row.metadata) : {}
     }));
@@ -140,19 +162,22 @@ router.get('/', (req, res) => {
  *               $ref: '#/components/schemas/VaultSolution'
  */
 router.post('/', (req, res) => {
-  const { title, description, category, tags, code_snippet, language, usage_count, author, metadata } = req.body;
+  const { title, description, category, tags, code, code_snippet, language, usage_count, author, metadata } = req.body;
   const id = Math.random().toString(36).substr(2, 9);
   const now = new Date().toISOString();
 
-  const sql = `INSERT INTO vault_solutions (id, title, description, category, tags, code_snippet, language, usage_count, author, created_date, updated_date, metadata) 
+  // Use code or code_snippet, whichever is provided
+  const codeContent = code || code_snippet;
+
+  const sql = `INSERT INTO vault_solutions (id, title, description, category, tags, code_snippet, language, usage_count, author, created_date, updated_date, metadata)
                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-  
+
   const params = [
-    id, title, description, category, 
-    JSON.stringify(tags || []), 
-    code_snippet, language, 
-    usage_count || 0, author, 
-    now, now, 
+    id, title, description, category,
+    JSON.stringify(tags || []),
+    codeContent, language, // Map frontend field to database field
+    usage_count || 0, author,
+    now, now,
     JSON.stringify(metadata || {})
   ];
 
@@ -167,7 +192,7 @@ router.post('/', (req, res) => {
       description,
       category,
       tags: tags || [],
-      code_snippet,
+      code: codeContent, // Return the field as 'code' for frontend compatibility
       language,
       usage_count: usage_count || 0,
       author,
@@ -202,8 +227,11 @@ router.post('/', (req, res) => {
  *         description: The updated solution
  */
 router.put('/:id', (req, res) => {
-  const { title, description, category, tags, code_snippet, language, usage_count, author, metadata } = req.body;
+  const { title, description, category, tags, code, code_snippet, language, usage_count, author, metadata } = req.body;
   const now = new Date().toISOString();
+  
+  // Use code or code_snippet, whichever is provided
+  const codeContent = code || code_snippet;
 
   // First get existing to merge metadata
   db.get('SELECT * FROM vault_solutions WHERE id = ?', [req.params.id], (err, row) => {
@@ -219,7 +247,7 @@ router.put('/:id', (req, res) => {
     const existingMetadata = row.metadata ? JSON.parse(row.metadata) : {};
     const mergedMetadata = metadata ? { ...existingMetadata, ...metadata } : existingMetadata;
 
-    const sql = `UPDATE vault_solutions SET 
+    const sql = `UPDATE vault_solutions SET
                  title = COALESCE(?, title),
                  description = COALESCE(?, description),
                  category = COALESCE(?, category),
@@ -233,9 +261,9 @@ router.put('/:id', (req, res) => {
                  WHERE id = ?`;
 
     const params = [
-      title, description, category, 
+      title, description, category,
       tags ? JSON.stringify(tags) : null,
-      code_snippet, language, usage_count, author,
+      codeContent, language, usage_count, author, // Map frontend field to database field
       now, JSON.stringify(mergedMetadata),
       req.params.id
     ];
@@ -245,7 +273,7 @@ router.put('/:id', (req, res) => {
         res.status(500).json({ error: err.message });
         return;
       }
-      // Return updated object
+      // Return updated object with proper field mapping
       db.get('SELECT * FROM vault_solutions WHERE id = ?', [req.params.id], (err, row) => {
         if (err) {
           res.status(500).json({ error: err.message });
@@ -253,6 +281,7 @@ router.put('/:id', (req, res) => {
         }
         res.json({
           ...row,
+          code: row.code_snippet, // Map database field to frontend field name
           tags: JSON.parse(row.tags),
           metadata: JSON.parse(row.metadata)
         });

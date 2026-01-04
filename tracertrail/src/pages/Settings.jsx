@@ -18,11 +18,13 @@ import {
   AlertDialogHeader, 
   AlertDialogTitle 
 } from "@/components/ui/alert-dialog";
-import { Settings as SettingsIcon, Key, Webhook, Save, FolderTree, FileText, CheckCircle, AlertCircle, AlertTriangle, Loader2, Database, Sparkles, Trash2 } from "lucide-react";
+import { Settings as SettingsIcon, Key, Webhook, Save, FolderTree, FileText, CheckCircle, AlertCircle, AlertTriangle, Loader2, Database, Sparkles, Trash2, Server } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import AppNav from "@/components/navigation/AppNav";
 import { populateSampleData } from "@/utils/sampleDataGenerator";
+import ApiDocs from "@/components/settings/ApiDocs";
+
 
 export default function Settings() {
   const queryClient = useQueryClient();
@@ -317,6 +319,10 @@ export default function Settings() {
                 <Key className="w-4 h-4 mr-2" />
                 API Keys
               </TabsTrigger>
+              <TabsTrigger value="rest-api" className="data-[state=active]:bg-cyan-600">
+                <Server className="w-4 h-4 mr-2" />
+                RESTful API
+              </TabsTrigger>
               <TabsTrigger value="webhooks" className="data-[state=active]:bg-cyan-600">
                 <Webhook className="w-4 h-4 mr-2" />
                 Webhooks & Secrets
@@ -407,6 +413,10 @@ export default function Settings() {
                   </div>
                 </CardContent>
               </Card>
+            </TabsContent>
+
+            <TabsContent value="rest-api">
+              <ApiDocs />
             </TabsContent>
 
             <TabsContent value="webhooks">

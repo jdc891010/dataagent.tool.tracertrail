@@ -1,6 +1,7 @@
 import './App.css'
 import Pages from "@/pages/index.jsx"
 import { Toaster } from "@/components/ui/toaster"
+import { Toaster as SonnerToaster } from "@/components/ui/sonner"
 import { DataInitializer } from "@/components/DataInitializer"
 
 function App() {
@@ -9,6 +10,7 @@ function App() {
       <DataInitializer />
       <Pages />
       <Toaster />
+      <SonnerToaster />
     </>
   )
 }

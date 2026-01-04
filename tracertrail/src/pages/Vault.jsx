@@ -50,7 +50,7 @@ export default function Vault() {
   });
 
   const handleCopyCode = (solution) => {
-    navigator.clipboard.writeText(solution.code);
+    navigator.clipboard.writeText(solution.code || solution.code_snippet || "");
     incrementUsageMutation.mutate({ id: solution.id, currentCount: solution.usage_count || 0 });
     toast.success("Code copied to clipboard");
   };
@@ -180,7 +180,7 @@ export default function Vault() {
                     </div>
                   </CardHeader>
                   <CardContent>
-                    <CodeBlock snippet={{ code: solution.code, language: solution.language }} />
+                    <CodeBlock snippet={{ code: solution.code || solution.code_snippet, language: solution.language }} />
                     {solution.source_issue_id && (
                       <Link to={createPageUrl(`IssueDetail?id=${solution.source_issue_id}`)}>
                         <p className="text-xs text-cyan-400 hover:text-cyan-300 mt-2">

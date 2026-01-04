@@ -20,7 +20,7 @@ test.describe('Settings', () => {
     await apiKeyInput.fill(newKey);
     
     await page.getByRole('button', { name: 'Save API Key' }).click();
-    
+
     // Verify value persisted (reload page)
     await page.reload();
     await expect(apiKeyInput).toHaveValue(newKey);

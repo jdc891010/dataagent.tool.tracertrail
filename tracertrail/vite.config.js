@@ -2,7 +2,7 @@ import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import path from 'path'
 import { fileURLToPath } from 'url'
-import expressApp from './server/app.js'
+// import expressApp from './server/app.js'
 import fs from 'fs'
 
 const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf-8'))
@@ -17,17 +17,21 @@ export default defineConfig({
   },
   plugins: [
     react(),
-    {
-      name: 'configure-server',
-      configureServer(server) {
-        // Mount the Express app at /api
-        server.middlewares.use('/api', expressApp);
-      }
-    }
+    // {
+    //   name: 'configure-server',
+    //   configureServer(server) {
+    //     // Mount the Express app at /api
+    //     server.middlewares.use('/api', expressApp);
+    //   }
+    // }
   ],
   server: {
     allowedHosts: true,
     proxy: {
+      '/api': {
+        target: 'http://localhost:8081',
+        changeOrigin: true,
+      },
       '/deepseek-proxy': {
         target: 'https://api.deepseek.com',
         changeOrigin: true,

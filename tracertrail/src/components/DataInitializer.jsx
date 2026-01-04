@@ -1,9 +1,11 @@
 import { useEffect, useRef } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { dataAgent } from '@/api/dataAgentClient';
 import { populateSampleData } from '@/utils/sampleDataGenerator';
 
 export function DataInitializer() {
   const initialized = useRef(false);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
     const initData = async () => {
@@ -16,9 +18,9 @@ export function DataInitializer() {
           console.log("No projects found. Seeding sample data...");
           await populateSampleData();
           console.log("Sample data seeded successfully.");
-          // Refresh the page or invalidate queries if needed, 
-          // but react-query should handle it if components fetch on mount.
-          window.location.reload(); 
+          
+          // Invalidate all queries to refresh UI without reloading page
+          queryClient.invalidateQueries();
         }
       } catch (error) {
         console.error("Failed to check or seed data:", error);
@@ -26,7 +28,7 @@ export function DataInitializer() {
     };
 
     initData();
-  }, []);
+  }, [queryClient]);
 
   return null;
 }

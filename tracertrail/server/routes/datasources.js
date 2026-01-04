@@ -17,12 +17,89 @@ const router = express.Router();
  *           type: string
  *         project_id:
  *           type: string
+ *         dataset_id:
+ *           type: string
  *         name:
  *           type: string
  *         type:
  *           type: string
+ *         source_location:
+ *           type: string
+ *         target_location:
+ *           type: string
  *         status:
  *           type: string
+ *         phase:
+ *           type: string
+ *         records_processed:
+ *           type: integer
+ *         records_failed:
+ *           type: integer
+ *         quality_score:
+ *           type: integer
+ *         last_run_date:
+ *           type: string
+ *           format: date-time
+ */
+
+/**
+ * @swagger
+ * /api/datasources:
+ *   get:
+ *     summary: Returns the list of all data sources
+ *     tags: [DataSources]
+ *     responses:
+ *       200:
+ *         description: The list of data sources
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/DataSource'
+ *             example:
+ *               - id: "src_sfdc_001"
+ *                 name: "SFDC Contacts API"
+ *                 dataset_id: "ds_crm_001"
+ *                 dataset: "CRM Contacts"
+ *                 project: "Customer 360"
+ *                 type: "api"
+ *                 source_location: "/services/data/v54.0/sobjects/Contact"
+ *                 target_location: "warehouse.raw.sfdc_contacts"
+ *                 status: "completed"
+ *                 phase: "ingestion"
+ *                 records_processed: 15420
+ *                 records_failed: 0
+ *                 quality_score: 98
+ *                 last_run_date: "2024-03-10T08:00:00Z"
+ *               - id: "src_event_002"
+ *                 name: "Event Stream Topic"
+ *                 dataset_id: "ds_web_002"
+ *                 dataset: "Web Events"
+ *                 project: "Customer 360"
+ *                 type: "stream"
+ *                 source_location: "kafka://events-prod/clickstream"
+ *                 target_location: "lake.events.clickstream"
+ *                 status: "in_progress"
+ *                 phase: "processing"
+ *                 records_processed: 2500000
+ *                 records_failed: 150
+ *                 quality_score: 95
+ *                 last_run_date: "2024-03-12T10:30:00Z"
+ *               - id: "src_sales_003"
+ *                 name: "Q3 Sales CSV"
+ *                 dataset_id: "ds_sales_003"
+ *                 dataset: "Regional Sales"
+ *                 project: "Sales Forecast"
+ *                 type: "file"
+ *                 source_location: "s3://finance-bucket/sales/2024/q3_final.csv"
+ *                 target_location: "warehouse.finance.quarterly_sales"
+ *                 status: "alert"
+ *                 phase: "validation"
+ *                 records_processed: 5000
+ *                 records_failed: 42
+ *                 quality_score: 85
+ *                 last_run_date: "2024-03-11T14:20:00Z"
  */
 
 router.get('/', (req, res) => {
@@ -90,6 +167,43 @@ router.post('/', (req, res) => {
   });
 });
 
+/**
+ * @swagger
+ * /api/datasources/{id}:
+ *   put:
+ *     summary: Update a data source (e.g., status, metrics)
+ *     description: Useful for SDK integration to update status, records processed, and quality scores after a job run.
+ *     tags: [DataSources]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               status:
+ *                 type: string
+ *               records_processed:
+ *                 type: integer
+ *               quality_score:
+ *                 type: integer
+ *               last_run_date:
+ *                 type: string
+ *                 format: date-time
+ *           example:
+ *             status: "completed"
+ *             records_processed: 15500
+ *             quality_score: 99
+ *             last_run_date: "2024-03-10T09:00:00Z"
+ *     responses:
+ *       200:
+ *         description: Data source updated
+ */
 router.put('/:id', (req, res) => {
     const { name, type, status, ...rest } = req.body;
     const updatedDate = new Date().toISOString();

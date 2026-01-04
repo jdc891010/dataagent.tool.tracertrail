@@ -3,6 +3,103 @@ import db from '../database.js';
 
 const router = express.Router();
 
+/**
+ * @swagger
+ * components:
+ *   schemas:
+ *     Dataset:
+ *       type: object
+ *       required:
+ *         - name
+ *         - project_id
+ *       properties:
+ *         id:
+ *           type: string
+ *         project_id:
+ *           type: string
+ *         name:
+ *           type: string
+ *         description:
+ *           type: string
+ *         source_system:
+ *           type: string
+ *         type:
+ *           type: string
+ *         refresh_frequency:
+ *           type: string
+ *         contains_pii:
+ *           type: boolean
+ *         data_retention:
+ *           type: string
+ *         data_steward:
+ *           type: string
+ *         data_owner:
+ *           type: string
+ *         tags:
+ *           type: array
+ *           items:
+ *             type: string
+ */
+
+/**
+ * @swagger
+ * /api/datasets:
+ *   get:
+ *     summary: Returns the list of all datasets
+ *     tags: [Datasets]
+ *     responses:
+ *       200:
+ *         description: The list of datasets
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Dataset'
+ *             example:
+ *               - id: "ds_crm_001"
+ *                 name: "CRM Contacts"
+ *                 description: "Raw contact data from Salesforce"
+ *                 project_id: "proj_123"
+ *                 project: "Customer 360"
+ *                 source_system: "Salesforce"
+ *                 type: "api"
+ *                 refresh_frequency: "daily"
+ *                 contains_pii: true
+ *                 data_retention: "7 years"
+ *                 data_steward: "Mike Ross"
+ *                 data_owner: "Sarah Chen"
+ *                 tags: ["raw", "crm"]
+ *                 created_date: "2024-01-15T11:00:00Z"
+ *               - id: "ds_web_002"
+ *                 name: "Web Events"
+ *                 description: "Clickstream data from website"
+ *                 project_id: "proj_123"
+ *                 project: "Customer 360"
+ *                 source_system: "Segment"
+ *                 type: "stream"
+ *                 refresh_frequency: "real-time"
+ *                 contains_pii: false
+ *                 data_retention: "1 year"
+ *                 data_steward: "Mike Ross"
+ *                 data_owner: "Sarah Chen"
+ *                 tags: ["events", "clickstream"]
+ *                 created_date: "2024-01-16T09:30:00Z"
+ *               - id: "ds_sales_003"
+ *                 name: "Regional Sales"
+ *                 description: "Aggregated sales numbers by region"
+ *                 project_id: "proj_456"
+ *                 project: "Sales Forecast"
+ *                 source_system: "Snowflake"
+ *                 type: "warehouse"
+ *                 refresh_frequency: "weekly"
+ *                 contains_pii: false
+ *                 data_retention: "10 years"
+ *                 data_steward: "Lisa Wang"
+ *                 data_owner: "Alex Thompson"
+ *                 tags: ["aggregated", "finance"]
+ *                 created_date: "2024-02-02T14:15:00Z"
+ */
 router.get('/', (req, res) => {
   let sql = "SELECT * FROM datasets";
   let params = [];

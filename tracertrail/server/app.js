@@ -12,6 +12,7 @@ import datasourceRoutes from './routes/datasources.js';
 import datasetRoutes from './routes/datasets.js';
 import issueRoutes from './routes/issues.js';
 import vaultRoutes from './routes/vault.js';
+import processingRunRoutes from './routes/processing_runs.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -115,10 +116,15 @@ apiRouter.use('/datasources', datasourceRoutes);
 apiRouter.use('/datasets', datasetRoutes);
 apiRouter.use('/issues', issueRoutes);
 apiRouter.use('/vault', vaultRoutes);
+apiRouter.use('/processing-runs', processingRunRoutes);
 apiRouter.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
+apiRouter.get('/openapi.json', (req, res) => res.json(swaggerDocs));
 
-if (process.env.NODE_ENV === 'production') {
-  console.log('Running in production mode');
+// Check if running directly (not imported by Vite)
+const isMainModule = process.argv[1] === fileURLToPath(import.meta.url);
+
+if (process.env.NODE_ENV === 'production' || isMainModule) {
+  console.log('Starting server in standalone mode...');
   app.use('/api', apiRouter);
   
   // Serve static files
@@ -141,13 +147,11 @@ if (process.env.NODE_ENV === 'production') {
     res.status(500).json({ error: 'Internal Server Error', message: err.message });
   });
 
-  const PORT = process.env.PORT || 80;
-  // Only start server if run directly
-  if (process.argv[1] === __filename) {
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`);
-    });
-  }
+  const PORT = process.env.PORT || 8081;
+  // Start server
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
+  });
 } else {
   // In development (Vite middleware), routes are at root
   app.use('/', apiRouter);

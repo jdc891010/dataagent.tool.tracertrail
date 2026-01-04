@@ -27,3 +27,8 @@ dist-ssr
 tracertrail/playwright-report
 tracertrail/playwright-report/*
 tmp/
+.docker_tmp/
+tracertrail/test-results
+tracertrail/test-results/.last-run.json
+test-results
+test-results/*

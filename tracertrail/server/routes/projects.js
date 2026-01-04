@@ -29,6 +29,33 @@ const router = express.Router();
  *     responses:
  *       200:
  *         description: The list of projects
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Project'
+ *             example:
+ *               - id: "proj_123"
+ *                 name: "Customer 360"
+ *                 description: "Consolidated view of customer data across all touchpoints"
+ *                 classification: "internal"
+ *                 owner: "Sarah Chen"
+ *                 data_steward: "Mike Ross"
+ *                 requirements: ["GDPR", "CCPA"]
+ *                 tags: ["customer", "analytics", "marketing"]
+ *                 created_date: "2024-01-15T10:00:00Z"
+ *                 updated_date: "2024-01-20T14:30:00Z"
+ *               - id: "proj_456"
+ *                 name: "Sales Forecast"
+ *                 description: "Quarterly sales prediction models and reporting"
+ *                 classification: "confidential"
+ *                 owner: "Alex Thompson"
+ *                 data_steward: "Lisa Wang"
+ *                 requirements: ["SOX"]
+ *                 tags: ["finance", "forecasting"]
+ *                 created_date: "2024-02-01T09:00:00Z"
+ *                 updated_date: "2024-02-05T11:15:00Z"
  */
 router.get('/', (req, res) => {
   let sql = "SELECT * FROM projects";

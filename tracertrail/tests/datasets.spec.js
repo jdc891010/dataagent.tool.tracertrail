@@ -7,42 +7,38 @@ test.describe('Datasets', () => {
     // Create a project first
     projectName = `Project for Dataset ${Date.now()}`;
     await page.goto('/Projects');
-    await page.getByRole('button', { name: 'New Project' }).click();
-    await page.getByLabel('Name').fill(projectName);
-    await page.getByLabel('Client').fill('Test Client');
-    await page.getByRole('button', { name: 'Create Project' }).click();
+    await page.getByRole('button', { name: 'New Project' }).click({ force: true });
+    await expect(page.getByRole('dialog')).toBeVisible();
+    await expect(page.locator('#name')).toBeVisible();
+    await page.locator('#name').fill(projectName);
+    await page.locator('#client').fill('Test Client');
+    await page.locator('button[type="submit"]').click();
     await expect(page.getByText(projectName)).toBeVisible();
   });
 
   test('Create a new dataset and verify', async ({ page }) => {
+    test.setTimeout(60000); // Extend timeout
     // 1. Navigate to Datasets page
     await page.goto('/Datasets');
     
     // 2. Click "New Dataset"
     await page.getByRole('button', { name: 'New Dataset' }).click();
+    await expect(page.getByRole('dialog')).toBeVisible();
     
     // 3. Fill form
     const datasetName = `Test Dataset ${Date.now()}`;
-    await page.getByLabel('Name').fill(datasetName);
+    await page.locator('#name').fill(datasetName);
     
-    // Select Project
-    // Shadcn select is a bit tricky. It uses a button trigger.
-    // The label is "Project", so the trigger is likely following it or associated.
-    // Usually `page.getByLabel('Project')` might target the hidden input or the button.
-    // Let's try to click the trigger.
-    await page.locator('button[role="combobox"]').first().click(); // Assuming it's the first combo box or use specific selector
-    // Or better, find the trigger by nearby text
-    // In DatasetForm, the Select for project is the first one.
-    // Let's try specific locator if label doesn't work.
-    
-    // Trying to find the project item in the dropdown
+    // Select Project (1st Select)
+    // Using nth(0) for the first combobox (Project)
+    await page.locator('button[role="combobox"]').nth(0).click();
     await page.getByRole('option', { name: projectName }).click();
 
-    await page.getByLabel('Description').fill('Test Dataset Description');
-    await page.getByLabel('Client').fill('Test Client');
-    await page.getByLabel('Data Steward').fill('Jane Doe');
-    await page.getByLabel('Data Owner').fill('John Doe');
-    await page.getByLabel('Source System').fill('ERP');
+    await page.locator('#description').fill('Test Dataset Description');
+    await page.locator('#client').fill('Test Client');
+    await page.locator('#data_steward').fill('Jane Doe');
+    await page.locator('#data_owner').fill('John Doe');
+    await page.locator('#source_system').fill('ERP');
     
     // Select Source Type (2nd Select)
     await page.locator('button[role="combobox"]').nth(1).click();

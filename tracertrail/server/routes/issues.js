@@ -21,12 +21,83 @@ const router = express.Router();
  *           type: string
  *         description:
  *           type: string
+ *         issue_type:
+ *           type: string
+ *         project:
+ *           type: string
+ *         dataset:
+ *           type: string
+ *         file:
+ *           type: string
+ *         assigned_to:
+ *           type: string
  *         severity:
  *           type: string
  *           enum: [low, medium, high, critical]
  *         status:
  *           type: string
  *           enum: [open, in_progress, resolved]
+ *         created_date:
+ *           type: string
+ *           format: date-time
+ *         tags:
+ *           type: array
+ *           items:
+ *             type: string
+ */
+
+/**
+ * @swagger
+ * /api/issues:
+ *   get:
+ *     summary: Returns the list of all issues
+ *     tags: [Issues]
+ *     responses:
+ *       200:
+ *         description: The list of issues
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/Issue'
+ *             example:
+ *               - id: "issue_001"
+ *                 title: "Null values in Email field"
+ *                 description: "Significant number of records coming from CRM have null email addresses despite it being a required field."
+ *                 issue_type: "completeness"
+ *                 severity: "high"
+ *                 status: "open"
+ *                 project: "Customer 360"
+ *                 dataset: "CRM Contacts"
+ *                 file: "SFDC Contacts API"
+ *                 assigned_to: "Mike Ross"
+ *                 created_date: "2024-03-12T08:30:00Z"
+ *                 tags: ["data-quality", "critical"]
+ *               - id: "issue_002"
+ *                 title: "Duplicate Event IDs"
+ *                 description: "Found duplicate event IDs in the clickstream data causing inaccurate session counts."
+ *                 issue_type: "uniqueness"
+ *                 severity: "medium"
+ *                 status: "in_progress"
+ *                 project: "Customer 360"
+ *                 dataset: "Web Events"
+ *                 file: "Event Stream Topic"
+ *                 assigned_to: "Sarah Chen"
+ *                 created_date: "2024-03-12T09:15:00Z"
+ *                 tags: ["deduplication"]
+ *               - id: "issue_003"
+ *                 title: "Currency Mismatch in Sales Data"
+ *                 description: "Q3 Sales CSV contains mixed currency symbols (USD and EUR) in the amount column, causing aggregation errors."
+ *                 issue_type: "consistency"
+ *                 severity: "critical"
+ *                 status: "open"
+ *                 project: "Sales Forecast"
+ *                 dataset: "Regional Sales"
+ *                 file: "Q3 Sales CSV"
+ *                 assigned_to: "Lisa Wang"
+ *                 created_date: "2024-03-12T11:00:00Z"
+ *                 tags: ["finance", "formatting"]
  */
 
 router.get('/', (req, res) => {
@@ -80,6 +151,29 @@ router.get('/', (req, res) => {
   });
 });
 
+/**
+ * @swagger
+ * /api/issues:
+ *   post:
+ *     summary: Log a new data quality issue
+ *     description: Ideal for logging issues discovered during automated jobs or interactive analysis (SDK).
+ *     tags: [Issues]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Issue'
+ *           example:
+ *             title: "Unexpected Nulls in Region"
+ *             data_source_id: "src_sales_003"
+ *             description: "Found 500 records with null Region in Q3 Sales data."
+ *             severity: "high"
+ *             issue_type: "completeness"
+ *     responses:
+ *       200:
+ *         description: The created issue
+ */
 router.post('/', (req, res) => {
   const { title, data_source_id, description, severity, status, id, ...rest } = req.body;
   const newId = id || Math.random().toString(36).substr(2, 9);
@@ -94,6 +188,30 @@ router.post('/', (req, res) => {
   });
 });
 
+/**
+ * @swagger
+ * /api/issues/{id}:
+ *   put:
+ *     summary: Update an issue status or details
+ *     tags: [Issues]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             $ref: '#/components/schemas/Issue'
+ *           example:
+ *             status: "resolved"
+ *             description: "Fixed by updating the ingestion pipeline to default nulls to 'Unknown'."
+ *     responses:
+ *       200:
+ *         description: Issue updated
+ */
 router.put('/:id', (req, res) => {
     const { title, description, severity, status, ...rest } = req.body;
     const updatedDate = new Date().toISOString();
