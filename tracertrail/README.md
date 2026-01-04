@@ -2,14 +2,14 @@
 
 **DataAgent TraceTrail** is a comprehensive data quality management and visualization platform that helps organizations track, analyze, and resolve data quality issues across their data ecosystem. Built as a React application using the DataAgent SDK, it provides powerful tools for data lineage visualization, issue tracking, and data governance.
 
-## 🎯 Project Objectives
+## 🎯 Objectives
 
 - **Data Quality Monitoring**: Track and manage data quality issues across projects, datasets, and data sources
 - **Data Lineage Visualization**: Visualize relationships between data projects, datasets, and sources
 - **Issue Resolution Workflow**: Provide a structured workflow for identifying, categorizing, and resolving data quality problems
 - **Data Governance**: Enable centralized management of data assets and their relationships
 
-## 🏗️ Repository Structure
+## 🏗️ Structure
 
 ```
 tracertrail/
@@ -65,7 +65,7 @@ tracertrail/
 └── README.md                   # This file
 ```
 
-## 🚀 Features
+## ✨ Features
 
 ### Dashboard
 - Overview of data quality issues across all projects
@@ -95,7 +95,7 @@ tracertrail/
 - Issue trend analysis
 - Export capabilities for reports
 
-## 🔧 Technologies Used
+## 🛠️ Technologies
 
 - **React** (v18.2.0) - Frontend library
 - **Vite** (v6.1.0) - Build tool and development server
@@ -108,7 +108,7 @@ tracertrail/
 - **Recharts** - Charting library
 - **Framer Motion** - Animation library
 
-## 🛠️ Development Setup
+## 🚀 Development Setup
 
 ### Prerequisites
 - Node.js (v18 or higher)
@@ -117,7 +117,7 @@ tracertrail/
 ### Installation
 ```bash
 # Clone the repository
-git clone <repository-url>
+git clone https://github.com/dataagent-tool/tracertrail.git
 
 # Navigate to the project directory
 cd tracertrail
@@ -149,14 +149,14 @@ npm run preview
 npm run lint
 ```
 
-## 📋 Available Scripts
+## 📋 Scripts
 
 - `npm run dev` - Start the development server
 - `npm run build` - Create a production build
 - `npm run lint` - Run ESLint
 - `npm run preview` - Preview the production build locally
 
-## 🤝 Contributing
+## 🤝 Contribution
 
 1. Fork the repository
 2. Create a feature branch (`git checkout -b feature/amazing-feature`)
@@ -167,11 +167,11 @@ npm run lint
 
 ## 📄 License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+This project is licensed under the MIT License - see the [LICENSE](../LICENSE) file in the parent directory for details.
 
-## 🆘 Support
+## 📞 Support
 
-For technical support and questions, please contact the development team or submit an issue in the repository.
+For technical support and questions, please submit an issue in the [main repository](https://github.com/dataagent-tool/tracertrail/issues).
 
 ---
 

@@ -1,20 +1,64 @@
-# Project Backlog
+# TraceTrail Development Tasks
 
-### UI/UX
-- [ ] **Rework DataSource Timer Functionality**: The timer and time tracking UI has been temporarily removed (commented out) from `DataSourceDetail.jsx` and `DataSourceQuickAction.jsx` in v1. It needs to be reworked to be more robust and user-friendly. The database schema (`total_processing_duration`, `daily_processing_duration`) has been preserved.
-- [ ] Form validation across all form pages/screens
+## 🚀 Core Features
 
+### Data Quality Management
+- [ ] Implement issue tracking with severity levels (critical, high, medium, low)
+- [ ] Add status tracking (open, in progress, fixed, verified, won't fix)
+- [ ] Create issue categorization by type and project
+- [ ] Add detailed issue views with affected columns
 
-### Features:
-- [ ] Add connection ability for Postgresql
-- [ ] Add DDL specifically for Postgresql (could be hosted, or local)
+### Data Lineage Visualization
+- [ ] Implement interactive graph showing relationships between projects, datasets, and data sources
+- [ ] Add color-coded nodes indicating issue severity levels
+- [ ] Implement zoom and pan functionality for exploring complex data relationships
+- [ ] Add filtering by project and dataset
 
-### CI CD
-- Build 
-- Test using Pytest
-- Testing using Playwright
+### Dashboard
+- [ ] Create overview of data quality issues across all projects
+- [ ] Add quick access to in-progress data sources
+- [ ] Implement issue statistics and filtering capabilities
+- [ ] Add hierarchical and list views of issues
 
-## Deployment
-- [ ] Dockerize the application
-- [ ] Set up CI/CD pipeline
-- [ ] Deploy to production environment / docker hub
+## 📊 Analytics & Reporting
+- [ ] Implement project health analytics
+- [ ] Add issue trend analysis
+- [ ] Create export capabilities for reports
+- [ ] Build issue analytics and reporting page
+
+## 🔐 Security & Access Control
+- [ ] Implement user authentication
+- [ ] Add role-based access control (RBAC)
+- [ ] Create user management interface
+- [ ] Add permission system for data access
+
+## 🔧 Technical Tasks
+- [ ] Set up continuous integration pipeline
+- [ ] Implement automated testing suite
+- [ ] Add code coverage reporting
+- [ ] Set up automated deployment
+- [ ] Implement error logging and monitoring
+
+## 📚 Documentation
+- [ ] Write API documentation
+- [ ] Create user guides
+- [ ] Add contribution guidelines
+- [ ] Document architecture decisions
+
+## 🚢 Deployment
+- [ ] Create Docker configuration
+- [ ] Set up staging environment
+- [ ] Prepare production deployment scripts
+- [ ] Document deployment process
+
+## 🧪 Testing
+- [ ] Write unit tests for core components
+- [ ] Implement integration tests
+- [ ] Create end-to-end test suite
+- [ ] Set up automated test execution
+
+## 📱 UI/UX Improvements
+- [ ] Design responsive layout for mobile devices
+- [ ] Implement dark/light theme options
+- [ ] Add keyboard navigation support
+- [ ] Improve accessibility compliance
