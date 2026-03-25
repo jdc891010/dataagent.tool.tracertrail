@@ -13,6 +13,11 @@ import datasetRoutes from './routes/datasets.js';
 import issueRoutes from './routes/issues.js';
 import vaultRoutes from './routes/vault.js';
 import processingRunRoutes from './routes/processing_runs.js';
+import authRoutes from './routes/auth.js';
+import auditRoutes from './routes/audit.js';
+import { requireAuthForMutations } from './middleware/auth.js';
+import { auditMiddleware } from './middleware/audit.js';
+import { handleJsonRpc, getToolDefinitions } from './mcp/index.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -89,14 +94,33 @@ const swaggerOptions = {
     info: {
       title: 'TracerTrail API',
       version: '1.0.0',
-      description: 'API for TracerTrail Data Quality Agent',
+      description: 'API for TracerTrail Data Quality Agent. Use API keys for external access.',
     },
     servers: [
       {
         url: '/api',
-        description: 'Vite Dev Server API',
+        description: 'API Server',
       },
     ],
+    components: {
+      securitySchemes: {
+        BearerAuth: {
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+          description: 'Enter access token received from /auth/token/issue endpoint'
+        },
+        ApiKeyAuth: {
+          type: 'apiKey',
+          in: 'header',
+          name: 'X-API-Key',
+          description: 'API Key for direct authentication (legacy)'
+        }
+      }
+    },
+    security: [{
+      BearerAuth: []
+    }]
   },
   apis: [path.join(__dirname, 'routes/*.js')],
 };
@@ -111,14 +135,34 @@ const swaggerDocs = swaggerJsDoc(swaggerOptions);
 // To be safe, we'll use a router that handles the paths relative to the mount point, assuming the mount point is `/api`.
 
 const apiRouter = express.Router();
-apiRouter.use('/projects', projectRoutes);
-apiRouter.use('/datasources', datasourceRoutes);
-apiRouter.use('/datasets', datasetRoutes);
-apiRouter.use('/issues', issueRoutes);
-apiRouter.use('/vault', vaultRoutes);
-apiRouter.use('/processing-runs', processingRunRoutes);
+
+apiRouter.use(auditMiddleware);
+
+apiRouter.use('/auth', authRoutes);
+apiRouter.use('/audit-logs', auditRoutes);
+
+apiRouter.use('/projects', requireAuthForMutations, projectRoutes);
+apiRouter.use('/datasources', requireAuthForMutations, datasourceRoutes);
+apiRouter.use('/datasets', requireAuthForMutations, datasetRoutes);
+apiRouter.use('/issues', requireAuthForMutations, issueRoutes);
+apiRouter.use('/vault', requireAuthForMutations, vaultRoutes);
+apiRouter.use('/processing-runs', requireAuthForMutations, processingRunRoutes);
+
 apiRouter.use('/docs', swaggerUi.serve, swaggerUi.setup(swaggerDocs));
 apiRouter.get('/openapi.json', (req, res) => res.json(swaggerDocs));
+
+apiRouter.post('/mcp', async (req, res) => {
+  try {
+    const result = await handleJsonRpc(req.body);
+    res.json(result);
+  } catch (error) {
+    res.json({ jsonrpc: '2.0', id: req.body.id, error: { code: -32000, message: error.message } });
+  }
+});
+
+apiRouter.get('/mcp/tools', (req, res) => {
+  res.json({ tools: getToolDefinitions() });
+});
 
 // Check if running directly (not imported by Vite)
 const isMainModule = process.argv[1] === fileURLToPath(import.meta.url);

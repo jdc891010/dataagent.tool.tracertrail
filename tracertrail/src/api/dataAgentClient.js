@@ -8,18 +8,24 @@ class RestEntity {
   }
 
   async _fetch(path, options = {}) {
-    const res = await fetch(`${API_BASE_URL}/${this.endpoint}${path}`, {
-      ...options,
-      headers: {
-        'Content-Type': 'application/json',
-        ...options.headers,
-      },
-    });
-    if (!res.ok) {
-      const error = await res.text();
-      throw new Error(error || res.statusText);
+    try {
+      const res = await fetch(`${API_BASE_URL}/${this.endpoint}${path}`, {
+        ...options,
+        headers: {
+          'Content-Type': 'application/json',
+          ...options.headers,
+        },
+      });
+      if (!res.ok) {
+        const error = await res.text();
+        console.error(`API Error [${res.status}]: ${error}`);
+        throw new Error(error || res.statusText);
+      }
+      return res.json();
+    } catch (err) {
+      console.error(`Fetch error for ${this.endpoint}${path}:`, err);
+      throw err;
     }
-    return res.json();
   }
 
   async list(sort = null, limit = null, options = {}) {
@@ -64,11 +70,11 @@ export const dataAgent = {
   ...localDataStore,
   entities: {
     ...localDataStore.entities,
-    // Override specific entities with API implementations - DISABLED for local dev
-    // Project: new RestEntity('projects'),
-    // DataSource: new RestEntity('datasources'),
-    // Dataset: new RestEntity('datasets'),
-    // Issue: new RestEntity('issues'),
+    // Override specific entities with API implementations
+    Project: new RestEntity('projects'),
+    DataSource: new RestEntity('datasources'),
+    Dataset: new RestEntity('datasets'),
+    Issue: new RestEntity('issues'),
     VaultSolution: new RestEntity('vault'),
   }
 };

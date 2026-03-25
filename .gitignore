@@ -33,3 +33,12 @@ tracertrail/test-results/.last-run.json
 test-results
 test-results/*
 tracertrail/server/storage/tracertrail.db
+tracertrail/server/storage/tracertrail.db-shm
+tracertrail/server/storage/tracertrail.db-wal
+
+ERROR.md
+FUTURE.md
+TASKS.md
+*TASKS.md
+nul
+output.md

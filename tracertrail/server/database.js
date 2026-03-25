@@ -110,9 +110,77 @@ function initializeSchema() {
       metadata JSON,
       FOREIGN KEY(data_source_id) REFERENCES data_sources(id)
     )`);
-    
+
+    // API Keys for external access
+    db.run(`CREATE TABLE IF NOT EXISTS api_keys (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      key_hash TEXT NOT NULL,
+      permissions JSON,
+      rate_limit INTEGER DEFAULT 100,
+      is_active INTEGER DEFAULT 1,
+      last_used_at TEXT,
+      created_date TEXT,
+      expires_at TEXT
+    )`);
+
+    // Access Tokens
+    db.run(`CREATE TABLE IF NOT EXISTS access_tokens (
+      id TEXT PRIMARY KEY,
+      api_key_id TEXT,
+      token_hash TEXT NOT NULL,
+      expires_at TEXT,
+      created_date TEXT,
+      FOREIGN KEY(api_key_id) REFERENCES api_keys(id)
+    )`);
+
+    // Settings
+    db.run(`CREATE TABLE IF NOT EXISTS settings (
+      key TEXT PRIMARY KEY,
+      value TEXT,
+      updated_date TEXT
+    )`);
+
+    // Audit Logs
+    db.run(`CREATE TABLE IF NOT EXISTS audit_logs (
+      id TEXT PRIMARY KEY,
+      api_key_id TEXT,
+      key_name TEXT,
+      method TEXT,
+      endpoint TEXT,
+      status_code INTEGER,
+      subject_type TEXT,
+      subject_id TEXT,
+      client_ip TEXT,
+      user_agent TEXT,
+      duration_ms INTEGER,
+      created_date TEXT
+    )`);
+
+    // Create index for faster queries
+    db.run(`CREATE INDEX IF NOT EXISTS idx_audit_logs_created_date ON audit_logs(created_date DESC)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_audit_logs_api_key ON audit_logs(api_key_id)`);
+    db.run(`CREATE INDEX IF NOT EXISTS idx_audit_logs_subject ON audit_logs(subject_type, subject_id)`);
+
+    seedDefaultSettings();
     seedVaultSolutions();
   });
+}
+
+function seedDefaultSettings() {
+  const defaultSettings = [
+    { key: 'default_rate_limit', value: '100' },
+    { key: 'default_token_expiry', value: '3600' },
+    { key: 'default_key_expiry', value: '2592000' },
+    { key: 'jupyter_url', value: '' },
+  ];
+
+  const stmt = db.prepare(`INSERT OR IGNORE INTO settings (key, value, updated_date) VALUES (?, ?, ?)`);
+  defaultSettings.forEach(setting => {
+    stmt.run(setting.key, setting.value, new Date().toISOString());
+  });
+  stmt.finalize();
+  console.log('Default settings seeded.');
 }
 
 function seedVaultSolutions() {
@@ -403,6 +471,129 @@ WHERE
       stmt.finalize();
       console.log(`Seeded ${solutions.length} Vault Solutions.`);
     }
+  });
+}
+
+import crypto from 'crypto';
+
+export function generateApiKey() {
+  return 'sk_' + crypto.randomBytes(32).toString('hex');
+}
+
+export function hashKey(key) {
+  return crypto.createHash('sha256').update(key).digest('hex');
+}
+
+export function generateToken() {
+  return 'tt_' + crypto.randomBytes(32).toString('hex');
+}
+
+export function hashToken(token) {
+  return crypto.createHash('sha256').update(token).digest('hex');
+}
+
+export function getSetting(key) {
+  return new Promise((resolve, reject) => {
+    db.get('SELECT value FROM settings WHERE key = ?', [key], (err, row) => {
+      if (err) reject(err);
+      else resolve(row ? row.value : null);
+    });
+  });
+}
+
+export function setSetting(key, value) {
+  return new Promise((resolve, reject) => {
+    db.run(
+      'INSERT OR REPLACE INTO settings (key, value, updated_date) VALUES (?, ?, ?)',
+      [key, value, new Date().toISOString()],
+      function(err) {
+        if (err) reject(err);
+        else resolve(this.changes);
+      }
+    );
+  });
+}
+
+export function getAllSettings() {
+  return new Promise((resolve, reject) => {
+    db.all('SELECT key, value FROM settings', [], (err, rows) => {
+      if (err) reject(err);
+      else {
+        const settings = {};
+        rows.forEach(row => { settings[row.key] = row.value; });
+        resolve(settings);
+      }
+    });
+  });
+}
+
+function generateId() {
+  return Math.random().toString(36).substring(2) + Date.now().toString(36);
+}
+
+export function createAuditLog(logData) {
+  return new Promise((resolve, reject) => {
+    const { api_key_id, key_name, method, endpoint, status_code, subject_type, subject_id, client_ip, user_agent, duration_ms } = logData;
+    const id = generateId();
+    const created_date = new Date().toISOString();
+    
+    db.run(
+      `INSERT INTO audit_logs (id, api_key_id, key_name, method, endpoint, status_code, subject_type, subject_id, client_ip, user_agent, duration_ms, created_date)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [id, api_key_id, key_name, method, endpoint, status_code, subject_type, subject_id, client_ip, user_agent, duration_ms, created_date],
+      function(err) {
+        if (err) reject(err);
+        else resolve(id);
+      }
+    );
+  });
+}
+
+export function getAuditLogs(filters = {}) {
+  return new Promise((resolve, reject) => {
+    let sql = 'SELECT * FROM audit_logs WHERE 1=1';
+    const params = [];
+    
+    if (filters.api_key_id) {
+      sql += ' AND api_key_id = ?';
+      params.push(filters.api_key_id);
+    }
+    if (filters.subject_type) {
+      sql += ' AND subject_type = ?';
+      params.push(filters.subject_type);
+    }
+    if (filters.method) {
+      sql += ' AND method = ?';
+      params.push(filters.method);
+    }
+    if (filters.status_code) {
+      sql += ' AND status_code = ?';
+      params.push(filters.status_code);
+    }
+    if (filters.from_date) {
+      sql += ' AND created_date >= ?';
+      params.push(filters.from_date);
+    }
+    if (filters.to_date) {
+      sql += ' AND created_date <= ?';
+      params.push(filters.to_date);
+    }
+    
+    sql += ' ORDER BY created_date DESC';
+    
+    if (filters.limit) {
+      sql += ' LIMIT ?';
+      params.push(filters.limit);
+    }
+    if (filters.offset) {
+      sql += ' OFFSET ?';
+      params.push(filters.offset);
+    }
+    
+    db.all(sql, params, (err, rows) => {
+      if (err) reject(err);
+      else resolve(rows);
+    });
   });
 }
 

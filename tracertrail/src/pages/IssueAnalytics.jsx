@@ -10,10 +10,15 @@ import { TrendingUp, AlertTriangle, GitBranch, Target } from "lucide-react";
 import AppNav from "@/components/navigation/AppNav";
 
 export default function IssueAnalytics() {
-  const { data: issues = [], isLoading } = useQuery({
+  const { data: issues = [], isLoading, error } = useQuery({
     queryKey: ["issues"],
-    queryFn: () => dataAgent.entities.Issue.list()
+    queryFn: () => dataAgent.entities.Issue.list(),
+    retry: 1,
   });
+
+  if (error) {
+    console.error("Error loading issues:", error);
+  }
 
   // Cluster issues by similarity
   const issueClusters = useMemo(() => {
@@ -133,6 +138,10 @@ export default function IssueAnalytics() {
             <div className="space-y-4">
               {[1,2,3].map(i => <Skeleton key={i} className="h-32" />)}
             </div>
+          ) : error ? (
+            <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4 text-red-400">
+              <p>Error loading issues: {error.message}</p>
+            </div>
           ) : (
             <div className="space-y-6">
               {/* Summary Stats */}
@@ -222,7 +231,7 @@ export default function IssueAnalytics() {
                                   <Badge variant="destructive">Systemic</Badge>
                                 )}
                               </div>
-                              <h3 className="font-semibold text-white">{cluster.project} - {cluster.type.replace('_', ' ')}</h3>
+                              <h3 className="font-semibold text-white">{cluster.project} - {cluster.type ? cluster.type.replace('_', ' ') : 'Unknown'}</h3>
                               <p className="text-sm text-slate-400 mt-1">{cluster.pattern}</p>
                             </div>
                             <div className="text-right text-sm">
@@ -269,7 +278,7 @@ export default function IssueAnalytics() {
                               <div className="flex-1">
                                 <div className="font-medium text-sm text-white">{issue.title}</div>
                                 <div className="text-xs text-slate-400 mt-1">
-                                  {issue.project} • {issue.dataset} • {issue.discovery_date}
+                                  {issue.project} • {issue.dataset} • {issue.discovery_date || 'N/A'}
                                 </div>
                               </div>
                               <Badge className={

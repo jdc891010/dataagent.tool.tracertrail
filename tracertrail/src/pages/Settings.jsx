@@ -24,6 +24,7 @@ import { format } from "date-fns";
 import AppNav from "@/components/navigation/AppNav";
 import { populateSampleData } from "@/utils/sampleDataGenerator";
 import ApiDocs from "@/components/settings/ApiDocs";
+import ApiKeysManager from "@/components/settings/ApiKeysManager";
 
 
 export default function Settings() {
@@ -74,7 +75,11 @@ export default function Settings() {
 
   const { data: auditLogs = [] } = useQuery({
     queryKey: ["audit-logs"],
-    queryFn: () => dataAgent.entities.AuditLog.list("-created_date", 100)
+    queryFn: async () => {
+      const response = await fetch("/api/audit-logs?limit=100");
+      if (!response.ok) throw new Error("Failed to fetch audit logs");
+      return response.json();
+    }
   });
 
   const saveApiKeyMutation = useMutation({
@@ -313,11 +318,15 @@ export default function Settings() {
             <p className="text-slate-400">Configure your application and project settings</p>
           </div>
 
-          <Tabs defaultValue="api" className="space-y-6">
+          <Tabs defaultValue="api-access" className="space-y-6">
             <TabsList className="bg-slate-800 border border-slate-700">
-              <TabsTrigger value="api" className="data-[state=active]:bg-cyan-600">
+              <TabsTrigger value="api-access" className="data-[state=active]:bg-cyan-600">
                 <Key className="w-4 h-4 mr-2" />
-                API Keys
+                API Access
+              </TabsTrigger>
+              <TabsTrigger value="ai-provider" className="data-[state=active]:bg-cyan-600">
+                <Sparkles className="w-4 h-4 mr-2" />
+                AI Provider
               </TabsTrigger>
               <TabsTrigger value="rest-api" className="data-[state=active]:bg-cyan-600">
                 <Server className="w-4 h-4 mr-2" />
@@ -337,7 +346,11 @@ export default function Settings() {
               </TabsTrigger>
             </TabsList>
 
-            <TabsContent value="api">
+            <TabsContent value="api-access">
+              <ApiKeysManager />
+            </TabsContent>
+
+            <TabsContent value="ai-provider">
               <Card className="bg-slate-800 border-slate-700">
                 <CardHeader>
                   <CardTitle className="text-white">DeepSeek API Configuration</CardTitle>
@@ -839,29 +852,29 @@ CREATE INDEX idx_issue_severity ON issue(severity);`}
                     <p className="text-sm text-slate-400">System-wide activity log</p>
                   </div>
                   <div className="flex gap-2">
-                    <Button
+                      <Button
                       onClick={async () => {
                         try {
                           toast.info("Fetching audit logs...");
                           
-                          // Fetch logs directly from database instead of backend function
-                          const logs = await dataAgent.entities.AuditLog.list("-created_date");
+                          const response = await fetch("/api/audit-logs?limit=1000");
+                          if (!response.ok) throw new Error("Failed to fetch");
+                          const logs = await response.json();
                           
                           // Convert to human-readable text
-                          let textOutput = "=== AUDIT LOG EXPORT ===\n";
+                          let textOutput = "=== API AUDIT LOG EXPORT ===\n";
                           textOutput += `Generated: ${new Date().toISOString()}\n`;
                           textOutput += `Total Entries: ${logs.length}\n\n`;
                           textOutput += "=".repeat(80) + "\n\n";
                           
                           logs.forEach((log, index) => {
                             textOutput += `[${index + 1}] ${format(new Date(log.created_date), "MMM d, yyyy HH:mm:ss")}\n`;
-                            textOutput += `Event: ${log.event_type} | Entity: ${log.entity_type}\n`;
-                            textOutput += `Name: ${log.entity_name || 'N/A'}\n`;
-                            textOutput += `Action By: ${log.action_by || 'N/A'}\n`;
-                            textOutput += `Description: ${log.description}\n`;
-                            if (log.metadata && Object.keys(log.metadata).length > 0) {
-                              textOutput += `Metadata: ${JSON.stringify(log.metadata, null, 2)}\n`;
-                            }
+                            textOutput += `Method: ${log.method} | Status: ${log.status_code}\n`;
+                            textOutput += `Endpoint: ${log.endpoint}\n`;
+                            textOutput += `API Key: ${log.key_name || 'N/A'}\n`;
+                            textOutput += `Subject: ${log.subject_type || 'N/A'}${log.subject_id ? ` (${log.subject_id})` : ''}\n`;
+                            textOutput += `Client IP: ${log.client_ip || 'N/A'}\n`;
+                            textOutput += `Duration: ${log.duration_ms}ms\n`;
                             textOutput += "-".repeat(80) + "\n\n";
                           });
                           
@@ -892,8 +905,9 @@ CREATE INDEX idx_issue_severity ON issue(severity);`}
                         try {
                           toast.info("Fetching audit logs...");
                           
-                          // Fetch logs directly from database
-                          const logs = await dataAgent.entities.AuditLog.list("-created_date");
+                          const response = await fetch("/api/audit-logs?limit=1000");
+                          if (!response.ok) throw new Error("Failed to fetch");
+                          const logs = await response.json();
                           
                           // Format as JSON export
                           const jsonExport = {
@@ -935,19 +949,32 @@ CREATE INDEX idx_issue_severity ON issue(severity);`}
                         <div key={log.id} className="p-3 bg-slate-900/50 rounded-lg border border-slate-700">
                           <div className="flex items-start justify-between gap-3">
                             <div className="flex-1">
-                              <div className="flex items-center gap-2 mb-1">
+                              <div className="flex items-center gap-2 mb-1 flex-wrap">
                                 <Badge variant="outline" className="text-cyan-400 border-cyan-500">
-                                  {log.event_type.replace(/_/g, ' ')}
+                                  {log.method}
                                 </Badge>
+                                <Badge variant="outline" className={`border ${
+                                  log.status_code >= 200 && log.status_code < 300 ? 'text-green-400 border-green-500' :
+                                  log.status_code >= 400 ? 'text-red-400 border-red-500' :
+                                  'text-yellow-400 border-yellow-500'
+                                }`}>
+                                  {log.status_code}
+                                </Badge>
+                                {log.subject_type && (
+                                  <Badge variant="outline" className="text-purple-400 border-purple-500">
+                                    {log.subject_type}
+                                  </Badge>
+                                )}
                                 <span className="text-xs text-slate-400">
-                                  {format(new Date(log.created_date), "MMM d, yyyy HH:mm")}
+                                  {format(new Date(log.created_date), "MMM d, yyyy HH:mm:ss")}
                                 </span>
                               </div>
-                              <p className="text-sm text-white mb-1">{log.description}</p>
+                              <p className="text-sm text-white mb-1 font-mono">{log.endpoint}</p>
                               <div className="flex items-center gap-4 text-xs text-slate-400">
-                                <span>Entity: {log.entity_type}</span>
-                                {log.entity_name && <span>Name: {log.entity_name}</span>}
-                                {log.action_by && <span>By: {log.action_by}</span>}
+                                <span>Key: {log.key_name || 'N/A'}</span>
+                                {log.subject_id && <span>ID: {log.subject_id}</span>}
+                                <span>IP: {log.client_ip || 'N/A'}</span>
+                                <span>{log.duration_ms}ms</span>
                               </div>
                             </div>
                           </div>

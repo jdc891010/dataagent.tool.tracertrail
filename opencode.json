@@ -1,0 +1,42 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    // ── BROWSER CONTROL ──────────────────────────────────────────
+    "playwright": {
+      "type": "local",
+      "command": ["npx", "-y", "@playwright/mcp@latest"],
+      "enabled": true
+    },
+    "chrome-devtools": {
+      "type": "local",
+      "command": ["npx", "-y", "chrome-devtools-mcp@latest"],
+      "enabled": false
+    },
+
+    // ── DOCS & LIBRARY KNOWLEDGE ─────────────────────────────────
+    "context7": {
+      "type": "remote",
+      "url": "https://mcp.context7.com/mcp",
+      "enabled": true
+    },
+
+    // ── CODE SEARCH ──────────────────────────────────────────────
+    "gh-grep": {
+      "type": "remote",
+      "url": "https://mcp.grep.app",
+      "enabled": true
+    },
+
+    // ── FILESYSTEM ───────────────────────────────────────────────
+    "filesystem": {
+      "type": "local",
+      "command": [
+        "npx",
+        "-y",
+        "@modelcontextprotocol/server-filesystem",
+        "C:/Users/jdc/Documents/GithubPersonal/dataagent.tool.tracertrail"
+      ],
+      "enabled": true
+    }
+  }
+}
