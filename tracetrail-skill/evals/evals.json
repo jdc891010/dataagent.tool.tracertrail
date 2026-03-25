@@ -1,0 +1,213 @@
+{
+  "skill_name": "tracertrail-api",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "List all projects in TraceTrail and show me their names and statuses.",
+      "expected_output": "A formatted list of project names and statuses from the /projects endpoint",
+      "expectations": [
+        "The agent reads references/endpoints.md to find the correct endpoint",
+        "The agent calls GET /api/projects with correct Authorization header",
+        "The agent presents project names and statuses clearly to the user",
+        "No credentials are exposed in the output"
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Create a new project in TraceTrail called 'Test Project' with description 'This is a test project'.",
+      "expected_output": "The agent calls POST /api/projects with correct body and confirms creation",
+      "expectations": [
+        "The agent calls POST /api/projects",
+        "The request body includes name='Test Project', description='This is a test project'",
+        "The agent reports back the new project ID and confirms success",
+        "If the API returns an error, the agent reports it clearly"
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Get the details of the project called 'Test Project'.",
+      "expected_output": "The agent finds the project and returns its full details",
+      "expectations": [
+        "The agent first lists projects to find 'Test Project' or queries by name",
+        "The agent calls GET /api/projects/{id} with correct ID",
+        "The agent presents all relevant project fields to the user",
+        "If project not found, the agent reports this clearly"
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Update the description of project 'Test Project' to say 'This is an updated test project'.",
+      "expected_output": "The agent shows current → proposed value, asks confirmation, then updates",
+      "expectations": [
+        "The agent fetches current project state first",
+        "The agent shows the user the current description → new description",
+        "The agent asks for confirmation before updating",
+        "The agent calls PUT /api/projects/{id} with correct body",
+        "The agent confirms the update was successful"
+      ]
+    },
+    {
+      "id": 5,
+      "prompt": "Delete the project called 'Test Project'.",
+      "expected_output": "The agent asks for confirmation before deleting",
+      "expectations": [
+        "The agent does NOT immediately call DELETE",
+        "The agent fetches the project first to confirm it exists",
+        "The agent shows the user what will be deleted",
+        "The agent asks for explicit confirmation before proceeding",
+        "Only after confirmation, the agent calls DELETE /api/projects/{id}"
+      ]
+    },
+    {
+      "id": 6,
+      "prompt": "Create a new dataset called 'Test Dataset' for project 'Test Project' with source_type 'api'.",
+      "expected_output": "The agent creates the dataset and confirms with new ID",
+      "expectations": [
+        "The agent gets the project ID for 'Test Project' first",
+        "The agent calls POST /api/datasets with name, project_id, source_type",
+        "The agent reports back the new dataset ID",
+        "If project doesn't exist, the agent reports this"
+      ]
+    },
+    {
+      "id": 7,
+      "prompt": "List all datasets for project 'Test Project'.",
+      "expected_output": "The agent calls GET /api/datasets with project_id filter",
+      "expectations": [
+        "The agent gets the project ID first",
+        "The agent calls GET /api/datasets?project_id={id}",
+        "The agent presents the list of datasets"
+      ]
+    },
+    {
+      "id": 8,
+      "prompt": "Create a data source called 'Test API Source' with type 'api' for project 'Test Project'.",
+      "expected_output": "The agent creates the data source and confirms",
+      "expectations": [
+        "The agent gets the project ID first",
+        "The agent calls POST /api/datasources with name, type, project_id",
+        "The agent reports back the new data source ID"
+      ]
+    },
+    {
+      "id": 9,
+      "prompt": "List all issues with 'critical' severity in TraceTrail.",
+      "expected_output": "The agent calls GET /api/issues?severity=critical and presents results",
+      "expectations": [
+        "The agent calls GET /api/issues?severity=critical",
+        "The agent presents issue titles, statuses, and data sources",
+        "If no issues found, the agent reports this"
+      ]
+    },
+    {
+      "id": 10,
+      "prompt": "Create a new issue titled 'Test Issue' with severity 'high' for data source 'Test API Source'.",
+      "expected_output": "The agent creates the issue and confirms with new ID",
+      "expectations": [
+        "The agent gets the data source ID first",
+        "The agent calls POST /api/issues with title, severity, data_source_id",
+        "The agent reports back the new issue ID"
+      ]
+    },
+    {
+      "id": 11,
+      "prompt": "Resolve the issue with title 'Test Issue' with the resolution 'Fixed in ETL process'.",
+      "expected_output": "The agent finds the issue, confirms details, asks to resolve, then updates",
+      "expectations": [
+        "The agent finds the issue by listing or querying",
+        "The agent shows the issue details to the user",
+        "The agent asks for confirmation before resolving",
+        "The agent calls PUT /api/issues/{id}/resolve or PUT with status=resolved",
+        "The agent confirms the resolution"
+      ]
+    },
+    {
+      "id": 12,
+      "prompt": "Search the vault for solutions related to 'SQL'.",
+      "expected_output": "The agent calls GET /api/vault?q=SQL and presents matching solutions",
+      "expectations": [
+        "The agent calls GET /api/vault?q=SQL",
+        "The agent presents matching solution titles, categories, and code snippets"
+      ]
+    },
+    {
+      "id": 13,
+      "prompt": "Create a vault solution titled 'Test SQL Solution' with code snippet 'SELECT * FROM test' and language 'sql'.",
+      "expected_output": "The agent creates the vault solution and confirms",
+      "expectations": [
+        "The agent calls POST /api/vault with title, code_snippet, language",
+        "The agent reports back the new solution ID"
+      ]
+    },
+    {
+      "id": 14,
+      "prompt": "Check the system health status of TraceTrail.",
+      "expected_output": "The agent calls GET /api/health and reports status",
+      "expectations": [
+        "The agent calls GET /api/health",
+        "The agent reports health status, database connection, and timestamp"
+      ]
+    },
+    {
+      "id": 15,
+      "prompt": "Get the system statistics from TraceTrail.",
+      "expected_output": "The agent calls GET /api/stats and presents statistics",
+      "expectations": [
+        "The agent calls GET /api/stats",
+        "The agent presents counts for projects, datasets, data sources, issues, vault solutions, processing runs"
+      ]
+    },
+    {
+      "id": 16,
+      "prompt": "I want to create an API key called 'Test Key' that expires in 1 day.",
+      "expected_output": "The agent creates the API key and shows it ONCE",
+      "expectations": [
+        "The agent calls POST /api/auth/keys with name='Test Key', expires_in=86400",
+        "The agent shows the key only ONCE with a warning",
+        "The agent warns the user to copy the key immediately as it cannot be retrieved",
+        "The agent does NOT store or log the full key"
+      ]
+    },
+    {
+      "id": 17,
+      "prompt": "List all API keys in TraceTrail.",
+      "expected_output": "The agent calls GET /api/auth/keys and presents the list",
+      "expectations": [
+        "The agent calls GET /api/auth/keys",
+        "The agent presents key names, IDs, statuses, and expiration dates",
+        "The agent does NOT expose the actual key values"
+      ]
+    },
+    {
+      "id": 18,
+      "prompt": "Start a processing run for data source 'Test API Source'.",
+      "expected_output": "The agent starts the processing run and reports new run ID",
+      "expectations": [
+        "The agent gets the data source ID first",
+        "The agent calls POST /api/processing-runs with data_source_id",
+        "The agent reports new run ID and status"
+      ]
+    },
+    {
+      "id": 19,
+      "prompt": "What happens if I try to delete a project that doesn't exist?",
+      "expected_output": "The agent demonstrates proper error handling for 404",
+      "expectations": [
+        "The agent attempts to delete a non-existent project",
+        "The agent correctly handles 404 error",
+        "The agent reports the error clearly to the user",
+        "The agent does NOT crash or hallucinate"
+      ]
+    },
+    {
+      "id": 20,
+      "prompt": "What happens if I try to create a project without a name?",
+      "expected_output": "The agent demonstrates proper error handling for validation",
+      "expectations": [
+        "The agent attempts to create a project without required 'name' field",
+        "The agent correctly handles 400 validation error",
+        "The agent reports the error to the user with details"
+      ]
+    }
+  ]
+}
