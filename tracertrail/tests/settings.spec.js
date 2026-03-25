@@ -9,10 +9,12 @@ test.describe('Settings', () => {
     // Verify Header
     await expect(page.locator('h1:has-text("Settings")')).toBeVisible();
 
-    // 2. Update API Key
-    // Look for input with "DeepSeek API Key" label or placeholder
-    // It's in the default tab "API Keys"
-    const apiKeyInput = page.getByPlaceholder('sk-...');
+    await page.getByRole('tab', { name: 'AI Provider' }).click();
+ 
+     // 2. Update API Key
+     // Look for input with "DeepSeek API Key" label or placeholder
+     // It's in the default tab "API Keys"
+     const apiKeyInput = page.getByPlaceholder('sk-...');
     await expect(apiKeyInput).toBeVisible();
     
     // Fill in a test API key
@@ -23,6 +25,7 @@ test.describe('Settings', () => {
 
     // Verify value persisted (reload page)
     await page.reload();
+    await page.getByRole('tab', { name: 'AI Provider' }).click();
     await expect(apiKeyInput).toHaveValue(newKey);
     
     // 3. System Actions

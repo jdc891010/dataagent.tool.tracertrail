@@ -817,12 +817,7 @@ export const localDataStore = {
         }
       };
     },
-    populateSampleData: async () => {
-      // Import and execute the sample data generator
-      const { populateSampleData: actualPopulateSampleData } = await import('@/utils/sampleDataGenerator');
-      await actualPopulateSampleData();
-      return { success: true };
-    }
+
   },
   resetDatabase: async () => {
     Object.values(entities).forEach(entity => {

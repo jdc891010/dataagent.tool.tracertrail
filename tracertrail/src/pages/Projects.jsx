@@ -85,9 +85,9 @@ export default function Projects() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {projects.map(project => (
               <Link key={project.id} to={createPageUrl(`ProjectDetail?id=${project.id}`)}>
-                <Card className="p-5 bg-slate-800 border-slate-700 hover:border-cyan-500/50 transition-all duration-200 cursor-pointer group">
+                <Card className="p-5 bg-slate-800 border-slate-700 hover:border-cyan-500/50 transition-all duration-200 cursor-pointer group h-full flex flex-col">
                   <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 flex flex-col">
                       <div className="flex items-center gap-2 mb-2">
                         {statusIcons[project.status]}
                         <h3 className="font-semibold text-white group-hover:text-cyan-400 transition-colors">
@@ -96,7 +96,7 @@ export default function Projects() {
                       </div>
                       
                       {project.description && (
-                        <p className="text-sm text-slate-400 mb-3 line-clamp-2">
+                        <p className="text-sm text-slate-400 mb-3 line-clamp-2 flex-grow">
                           {project.description}
                         </p>
                       )}

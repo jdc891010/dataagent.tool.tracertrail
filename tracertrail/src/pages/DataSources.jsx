@@ -395,18 +395,18 @@ export default function DataSources() {
               </Button>
             </div>
           ) : (
-            <div className="space-y-3">
+            <div className="space-y-stack-card md:space-y-stack-card-md">
               {filteredSources.map(source => {
                 const StatusIcon = statusConfig[source.status]?.icon || Circle;
                 const statusColor = statusConfig[source.status]?.color || "text-slate-400";
                 const phaseInfo = phaseConfig[source.phase] || phaseConfig.queued;
                 
                 return (
-                  <Link key={source.id} to={createPageUrl(`DataSourceDetail?id=${source.id}`)}>
+                  <Link key={source.id} to={createPageUrl(`DataSourceDetail?id=${source.id}`)} className="block">
                     <Card className="p-4 bg-slate-800 border-slate-700 hover:border-cyan-500/50 transition-all cursor-pointer group">
                       <div className="flex items-start justify-between gap-4">
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-2 mb-2 flex-wrap">
+                        <div className="flex-1 min-w-0 space-y-3">
+                          <div className="flex items-center gap-2 flex-wrap">
                             <StatusIcon className={`${statusColor} ${statusColor.includes('Loader2') ? 'animate-spin' : ''}`} />
                             <h3 className="font-semibold text-white group-hover:text-cyan-400">
                               {source.name}
@@ -416,12 +416,12 @@ export default function DataSources() {
                           </div>
 
                           {source.source_location && (
-                            <div className="text-xs text-slate-400 mb-2 font-mono truncate">
+                            <div className="text-xs text-slate-400 font-mono truncate">
                               {source.source_location}
                             </div>
                           )}
 
-                          <div className="flex items-center gap-2 text-xs text-slate-400 mb-2">
+                          <div className="flex items-center gap-2 text-xs text-slate-400">
                             <span>Dataset: <span className="text-cyan-400">{getDatasetName(source.dataset_id)}</span></span>
                             <span>•</span>
                             <span>Project: <span className="text-cyan-400">{getProjectName(source.dataset_id)}</span></span>

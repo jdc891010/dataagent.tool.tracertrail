@@ -85,12 +85,12 @@ export default function Datasets() {
             </Button>
           </div>
         ) : (
-          <div className="space-y-3">
+          <div className="space-y-stack-card md:space-y-stack-card-md">
             {datasets.map(dataset => (
-              <Link key={dataset.id} to={createPageUrl(`DatasetDetail?id=${dataset.id}`)}>
+              <Link key={dataset.id} to={createPageUrl(`DatasetDetail?id=${dataset.id}`)} className="block">
                 <Card className="p-4 bg-slate-800 border-slate-700 hover:border-cyan-500/50 transition-all duration-200 cursor-pointer group">
                   <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
+                    <div className="flex-1 min-w-0 space-y-2">
                       <div className="flex items-center gap-2 mb-1">
                         <Database className="w-4 h-4 text-blue-600" />
                         <h3 className="font-semibold text-white group-hover:text-cyan-400 transition-colors">
@@ -100,19 +100,19 @@ export default function Datasets() {
                       </div>
                       
                       {dataset.description && (
-                        <p className="text-sm text-slate-400 mb-2 line-clamp-1">
+                        <p className="text-sm text-slate-400 line-clamp-1">
                           {dataset.description}
                         </p>
                       )}
                       
                       {dataset.client && (
-                        <div className="text-sm text-slate-300 mb-2">
+                        <div className="text-sm text-slate-300">
                           <span className="text-slate-500">Client:</span> {dataset.client}
                         </div>
                       )}
                       
                       {dataset.solution?.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mb-2">
+                        <div className="flex flex-wrap gap-1">
                           {dataset.solution.map((sol, i) => (
                             <Badge key={i} className="bg-purple-900/30 text-purple-400 border-purple-500/30 text-xs">
                               {sol}
@@ -157,7 +157,7 @@ export default function Datasets() {
                       </div>
                       
                       {dataset.tags?.length > 0 && (
-                        <div className="flex flex-wrap gap-1 mt-2">
+                        <div className="flex flex-wrap gap-1">
                           {dataset.tags.slice(0, 3).map((tag, i) => {
                             const colors = [
                               'bg-blue-600 text-white',

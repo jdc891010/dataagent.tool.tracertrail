@@ -6,6 +6,10 @@ export default {
     content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
   theme: {
   	extend: {
+  		spacing: {
+  			'stack-card': '1rem',
+  			'stack-card-md': '1.5rem'
+  		},
   		borderRadius: {
   			lg: 'var(--radius)',
   			md: 'calc(var(--radius) - 2px)',
